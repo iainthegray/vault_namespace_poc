@@ -13,10 +13,9 @@ variable "namespace_name" {
   type = string
 }
 
-variable "kv_path" {
-  description = "The path of the kv secrets engine"
-  type = string
-  default = "kv"
+variable "use_userpass" {
+  description = "a variable set to true or false to determine if a userpass auth method should be created"
+  default = false
 }
 
 variable "up_path" {
@@ -25,15 +24,18 @@ variable "up_path" {
   default = "userpass"
 }
 
-variable "use_userpass" {
-  description = "a variable set to true or false to determine if a userpass auth method should be created"
-  default = false
-}
 variable "up_lease_ttl" {
   description = "a variable to set the default lease ttl for the userpass auth mount"
   default = "600m"
 }
+
 variable "use_kv" {
   description = "a variable set to true or false to determine if a kv secrets method should be created"
   default = false
+}
+
+variable "kv_path" {
+  description = "The path of the kv secrets engine"
+  type = string
+  default = "kv"
 }
