@@ -20,17 +20,27 @@ To determine what mounts you want in a namespace, simply set the required variab
 
 Other mounts can be added to the module with the same logic
 
+### LDAP Groups
+
+The use of the 'use_ldap' variable allows creation of internal groups in the namespace and the addition of policies to them.
+
 ### Example usage
 
 ```hcl
-module "ns1_namespace" {
-  source = "github.com/iainthegray/vault_namespace_poc?ref=v1.0"
+module "avengers_namespace" {
+  source = "github.com/iainthegray/vault_namespace_poc"
   token = var.token
-  namespace_name = "my_shiny_new_namespace"
-  vault_addr = "http://my_vault_addr.bob"
-  kv_path = "my_secrets"
-  use_userpass = false
+  namespace_name = "avengers"
+  vault_addr = var.vault_addr
+  kv_path = var.kv_path
   use_kv = true
+  use_policy = true
+  policies = {
+    "avengers_pol" = "${data.template_file.avengers_policy.rendered}"
+    }
+  use_ldap = true
+  ns_group_name = "avengers"
+  ext_group_id = vault_identity_group.avengers_group.id
 }
 ```
 ## Variables
@@ -43,6 +53,9 @@ module "ns1_namespace" {
 ### Optional (with defaults)
 - use_userpass    = (false) boolean to determine if a userpass auth mount is created
 - use_kv          = (false) boolean to determine if a kv secrets engine is created
+- use_ldap        = (false) boolean to determine if internal groups should be created
+- use policy      = (false) boolean to add policies to the namespace and assign them to the internal group. This cannot be true if use_ldap is false
+- policies        = This is a map of policy_name and the rendered policy template (or flat policy if you really want)
 - up_path         = (userpass) path to mount auth engine
 - up_lease_ttl    = (600m) Default lease time for auth mount
 - kv_path         = (kv) path to mount my_secrets engine
