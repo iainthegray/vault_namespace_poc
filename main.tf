@@ -18,30 +18,8 @@ provider "vault" {
   namespace = var.namespace_name
   token = var.token
 }
-/* Authentication backends */
 
-resource "vault_auth_backend" "userpass" {
-  count = (var.use_userpass ? 1 : 0)
-  depends_on = [vault_namespace.my_namespace]
-  provider = vault.my_namespace
-  type       = "userpass"
-  path       = var.up_path
-  tune {
-    default_lease_ttl = var.up_lease_ttl
-  }
-}
-
-/* Secrets backends */
-resource "vault_mount" "kv" {
-  count = (var.use_kv ? 1 : 0)
-  depends_on  = [vault_namespace.my_namespace]
-  provider    = vault.my_namespace
-  path        = var.kv_path
-  type        = "kv"
-}
-
-/*Policy Creation
-This is based on the use_policy variable */
+/*Policy Creation */
 
 resource "vault_policy" "ns_policies" {
   provider    = vault.my_namespace
@@ -50,13 +28,17 @@ resource "vault_policy" "ns_policies" {
   policy = each.value
 }
 
-/* Namespace LDAP
-This is set up based on the use_ldap variable */
+/* Namespace internal groups linked to LDAP */
 resource "vault_identity_group" "internal" {
-  count = (var.use_ldap ? 1 : 0)
   provider    = vault.my_namespace
-  name     = var.ns_group_name
+  for_each = var.int_groups
+  name = each.key
+  member_group_ids = [ each.value ]
   type     = "internal"
-  member_group_ids = [var.ext_group_id]
-  policies = keys(var.policies)
+}
+resource "vault_identity_group_policies" "pols" {
+  for_each = var.policy_map
+  policies = [ each.key ]
+  group_id = each.value
+  exclusive = true
 }

@@ -55,13 +55,13 @@ variable "policies" {
   }
 }
 /* LDAP Variables */
-variable "ns_group_name" {
-  description = "The name the LDAP group will be added to"
-  type = string
-  default = ""
+variable "int_groups" {
+  description = "The name the LDAP groups to be added to int groups"
+  type = map
+  default = {"" = ""}
 }
-variable "ext_group_id" {
-  description = "The id of the external group to be added to the namespace group"
-  type = string
-  default = ""
+variable "policy_map" {
+  description = "a mapping of the policy to internal groups"
+  type = map
+  default = {"" = ""}
 }
