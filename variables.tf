@@ -31,6 +31,10 @@ variable "use_ldap" {
   description = "a variable set to true or false to determine if ldap groups should be created"
   default = false
 }
+variable "use_approle" {
+  description = "a variable set to true or false to determine if a approle auth method should be created"
+  default = false
+}
 /* Options that have sensible defaults. These are linked to the switches above */
 variable "up_path" {
   description = "The path of the userpass auth engine"
@@ -48,20 +52,60 @@ variable "kv_path" {
   type = string
   default = "kv"
 }
+
+variable "approle_path" {
+  description = "The path of the approle auth engine"
+  type = string
+  default = "approle"
+}
+
 variable "policies" {
   description = "A map of policies to create in the namespace"
   type = map
   default = {
   }
 }
+
 /* LDAP Variables */
 variable "int_groups" {
   description = "The name the LDAP groups to be added to int groups"
   type = map
   default = {"" = ""}
 }
+
 variable "policy_map" {
   description = "a mapping of the policy to internal groups"
   type = map
   default = {"" = ""}
+}
+/* Approle Variables */
+variable "my_role_name" {
+  description = "The name of the role created"
+  type = string
+  default = "myrole"
+}
+variable "token_policies" {
+  description = "Policies related to this approle"
+  type = list
+  default = [""]
+}
+variable "secret_id_bound_cidrs" {
+  description = "List of cidr blocks that the SID can be used from"
+  type = list
+  default = [""]
+}
+variable "token_bound_cidrs" {
+  description = "List of cidr blocks that the token can be used from"
+  type = list
+  default = [""]
+}
+variable "token_ttl" {
+  description = "default TTL of token"
+  type = list
+  default = [""]
+}
+variable "token_max_ttl" {
+  description = "default max TTL of token"
+  type = list
+  default = [""]
 }
